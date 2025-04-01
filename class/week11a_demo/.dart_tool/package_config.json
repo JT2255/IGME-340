@@ -39,9 +39,9 @@
     },
     {
       "name": "flame",
-      "rootUri": "file:///C:/Users/Joe/AppData/Local/Pub/Cache/hosted/pub.dev/flame-1.21.0",
+      "rootUri": "file:///C:/Users/Joe/AppData/Local/Pub/Cache/hosted/pub.dev/flame-1.26.1",
       "packageUri": "lib/",
-      "languageVersion": "3.4"
+      "languageVersion": "3.6"
     },
     {
       "name": "flutter",
@@ -176,7 +176,7 @@
       "languageVersion": "3.5"
     }
   ],
-  "generated": "2025-04-01T22:25:42.234230Z",
+  "generated": "2025-04-01T22:47:45.328015Z",
   "generator": "pub",
   "generatorVersion": "3.6.1",
   "flutterRoot": "file:///C:/Users/Joe/Desktop/flutter",
