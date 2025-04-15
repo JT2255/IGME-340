@@ -1,3 +1,3 @@
-# project3
+# Deal Delivery
 
-A new Flutter project.
+Mobile app that utilizes CheapShark API to find deals on games.
