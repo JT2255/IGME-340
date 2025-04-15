@@ -8,7 +8,7 @@ import 'package:sidebarx/sidebarx.dart';
 
 /// @author: Joe Trovato
 /// @version: 0.3.1
-/// @since: 2025-04-14
+/// @since: 2025-04-15
 /// 
 /// todo: deals page, info page, favorites, game search
 /// 
