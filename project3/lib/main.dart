@@ -7,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sidebarx/sidebarx.dart';
 
 /// @author: Joe Trovato
-/// @version: 0.3.1
+/// @version: 0.3.2
 /// @since: 2025-04-15
 /// 
 /// todo: deals page, info page, favorites, game search
@@ -61,7 +61,7 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  String dealsUrl = "https://www.cheapshark.com/api/1.0/deals?storeID=1&AAA=1";
+  String dealsUrl = "https://www.cheapshark.com/api/1.0/deals?storeID=1&AAA=1&pageSize=20";
   final sidebarController = SidebarXController(selectedIndex: 0, extended: true);
 
   @override
@@ -97,7 +97,7 @@ class _MainPageState extends State<MainPage> {
         } else {
           currentDeal["image"] = deal["thumb"];
         }
-
+        //currentDeal["image"] = deal["thumb"];
         dealsList.add(currentDeal);
       }
     }
@@ -112,7 +112,7 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Game Deals", style: TextStyle(color: Colors.white),),
+        title: Text(getTitleFromIndex(sidebarController.selectedIndex), style: TextStyle(color: Colors.white),),
         backgroundColor: canvasColor,
       ),
       body: getBodyFromIndex(sidebarController.selectedIndex),
@@ -289,7 +289,17 @@ Widget getBodyFromIndex(int index) {
   switch (index) {
     // deals
     case 0:
-      return DealsBody(dealsList: dealsList);
+      if (dealsList.isEmpty) {
+        return Center(
+          child: Text("Loading...", style: TextStyle(
+            fontSize: 40,
+            color: Colors.white
+            ),
+          ),
+        );
+      } else {
+        return DealsBody(dealsList: dealsList);
+      } 
     // search
     case 1: 
       return Container();
@@ -301,5 +311,20 @@ Widget getBodyFromIndex(int index) {
       return Container();
     default:
       return Container();  
+  }
+}
+
+String getTitleFromIndex(int index) {
+  switch (index) {
+    case 0:
+      return "Game Deals";
+    case 1:
+      return "Search";
+    case 2:
+      return "Favorites";
+    case 3:
+      return "About";
+    default:
+      return "Game Deals";
   }
 }
