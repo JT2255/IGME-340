@@ -9,10 +9,10 @@ import 'search.dart';
 import 'deals.dart';
 
 /// @author: Joe Trovato
-/// @version: 0.3.2
+/// @version: 0.4.0
 /// @since: 2025-04-15
 /// 
-/// todo: deals page, info page, favorites, game search
+/// todo: info page, favorites, game search
 /// 
 /// notes: none
 

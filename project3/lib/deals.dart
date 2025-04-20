@@ -24,88 +24,7 @@ class DealsBody extends StatelessWidget {
               itemBuilder: (context, index) {
                 return InkWell(
                   onTap: () {                
-                    showDialog(
-                      context: (context),
-                      builder: (context) {
-                        return AlertDialog(
-                          title: Row(
-                            children: [
-                              Text("${dealsList[index]["title"]}"),
-                              Spacer(),
-                              LikeButton(
-                                isLiked: dealsList[index]["isLiked"],
-                                onTap: (isLiked) async {
-                                  // add to favorites list
-                                  if (!isLiked) {
-                                    favoritesList.add(dealsList[index]);
-                                    dealsList[index]["isLiked"] = true;
-                                  } else {
-                                    favoritesList.remove(dealsList[index]);
-                                    dealsList[index]["isLiked"] = false;
-                                  }
-
-                                  return !isLiked;
-                                },
-                              ),
-                            ],
-                          ),
-                          content: SingleChildScrollView(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Image.network(dealsList[index]["image"]),
-                                Text("On Sale For: \$${dealsList[index]["salePrice"]}", style: TextStyle(fontSize: 15),),
-                                Text("Lowest Seen Price: \$${dealsList[index]["cheapestPrice"]}", style: TextStyle(fontSize: 15),),
-                                Text("\n${dealsList[index]["rating"]}% of ${dealsList[index]["ratingCount"]} user reviews are positive"),
-                                Text("Metacritic Score: ${dealsList[index]["metacriticScore"]}"),
-                              ],
-                            ),
-                          ),
-                          actions: [
-                            Row(
-                              children: [
-                                FilledButton(
-                                  onPressed: () {
-                                    // mailing list stuff
-                                  },
-                                  style: FilledButton.styleFrom(
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6.0)),
-                                  ),
-                                  child: Text("Email"),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: [                               
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 8.0),
-                                  child: FilledButton(
-                                    onPressed: () {
-                                      // open metacritic
-                                      launchUrlString("https://www.metacritic.com${dealsList[index]["metacriticLink"]}", mode: LaunchMode.externalApplication);
-                                    },
-                                    style: FilledButton.styleFrom(
-                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6.0)),
-                                    ),
-                                    child: Text("Metacritic"),
-                                  ),
-                                ),
-                                FilledButton(
-                                  onPressed: () {
-                                    // open steam page or app if installed on phone
-                                    launchUrlString("https://store.steampowered.com/app/${dealsList[index]["steamID"]}", mode: LaunchMode.externalApplication);
-                                  },
-                                  style: FilledButton.styleFrom(
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6.0)),
-                                  ),
-                                  child: Text("Steam"),
-                                ),
-                              ],
-                            )                          
-                          ],
-                        );
-                      }
-                    );
+                    showInfo(context, index);
                   },
                   child: Padding(
                     padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 8.0),
@@ -171,6 +90,94 @@ class DealsBody extends StatelessWidget {
           ),
         ],         
       ),
+    );
+  }
+
+  Future<dynamic> showInfo(BuildContext context, int index) {
+    return showDialog(
+      context: (context),
+      builder: (context) {
+        return AlertDialog(
+          title: Row(
+            children: [
+              Text("${dealsList[index]["title"]}"),
+              Spacer(),
+              LikeButton(
+                isLiked: dealsList[index]["isLiked"],
+                onTap: (isLiked) async {
+                  // add to favorites list
+                  if (!isLiked) {
+                    favoritesList.add(dealsList[index]);
+                    dealsList[index]["isLiked"] = true;
+                  } else {
+                    favoritesList.remove(dealsList[index]);
+                    dealsList[index]["isLiked"] = false;
+                  }
+
+                  return !isLiked;
+                },
+              ),
+            ],
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Image.network(dealsList[index]["image"]),
+                Padding(
+                  padding: const EdgeInsets.only(top: 5.0),
+                  child: Text("On Sale For: \$${dealsList[index]["salePrice"]}", style: TextStyle(fontSize: 15),),
+                ),
+                Text("Lowest Seen Price: \$${dealsList[index]["cheapestPrice"]}", style: TextStyle(fontSize: 15),),
+                Text("\n${dealsList[index]["rating"]}% of ${dealsList[index]["ratingCount"]} user reviews are positive"),
+                Text("Metacritic Score: ${dealsList[index]["metacriticScore"]}"),
+              ],
+            ),
+          ),
+          actions: [
+            Row(
+              children: [
+                FilledButton(
+                  onPressed: () {
+                    // mailing list stuff
+                  },
+                  style: FilledButton.styleFrom(
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6.0)),
+                  ),
+                  child: Text("Email"),
+                ),
+              ],
+            ),
+            Row(
+              children: [                               
+                Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: FilledButton(
+                    onPressed: () {
+                      // open metacritic
+                      launchUrlString("https://www.metacritic.com${dealsList[index]["metacriticLink"]}", mode: LaunchMode.externalApplication);
+                    },
+                    style: FilledButton.styleFrom(
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6.0)),
+                    ),
+                    child: Text("Metacritic"),
+                  ),
+                ),
+                FilledButton(
+                  onPressed: () {
+                    // open steam page or app if installed on phone
+                    launchUrlString("https://store.steampowered.com/app/${dealsList[index]["steamID"]}", mode: LaunchMode.externalApplication);
+                  },
+                  style: FilledButton.styleFrom(
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6.0)),
+                  ),
+                  child: Text("Steam"),
+                ),
+              ],
+            ),                          
+          ],
+        );
+      }
     );
   }
 }
