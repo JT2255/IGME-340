@@ -5,6 +5,8 @@ import 'package:http/http.dart' as http;
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sidebarx/sidebarx.dart';
+import 'search.dart';
+import 'deals.dart';
 
 /// @author: Joe Trovato
 /// @version: 0.3.2
@@ -25,7 +27,7 @@ final GoRouter router = GoRouter(
 );
 
 List dealsList = [];
-
+List favoritesList = [];
 const primaryColor = Color(0xFF685BFF);
 const canvasColor = Color(0xFF2E2E48);
 const scaffoldBackgroundColor = Color(0xFF464667);
@@ -62,7 +64,7 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   String dealsUrl = "https://www.cheapshark.com/api/1.0/deals?storeID=1&AAA=1&pageSize=20";
-  final sidebarController = SidebarXController(selectedIndex: 0, extended: true);
+  final sidebarController = SidebarXController(selectedIndex: 0, extended: true); 
 
   @override
   void initState() {
@@ -74,6 +76,7 @@ class _MainPageState extends State<MainPage> {
     var response = await http.get(Uri.parse(dealsUrl));
 
     dealsList.clear();
+    
 
     if (response.statusCode == 200) {
       var jsonResp = jsonDecode(response.body);
@@ -88,8 +91,11 @@ class _MainPageState extends State<MainPage> {
         currentDeal["title"] = deal["title"];
         currentDeal["salePrice"] = deal["salePrice"];
         currentDeal["normalPrice"] = deal["normalPrice"];
+        currentDeal["metacriticLink"] = deal["metacriticLink"];
+        currentDeal["id"] = deal["dealID"];
+        currentDeal["steamID"] = deal["steamAppID"];
+        currentDeal["isLiked"] = false;
         
-
         var imgCheck = await http.get(Uri.parse("https://cdn.cloudflare.steamstatic.com/steam/apps/${deal["steamAppID"]}/header.jpg"));
 
         if (imgCheck.statusCode == 200) {
@@ -97,7 +103,19 @@ class _MainPageState extends State<MainPage> {
         } else {
           currentDeal["image"] = deal["thumb"];
         }
-        //currentDeal["image"] = deal["thumb"];
+
+        var responseInfo = await http.get(Uri.parse("https://www.cheapshark.com/api/1.0/deals?id=${deal["dealID"]}"));
+
+        if (responseInfo.statusCode == 200) {
+          var gameResponse = jsonDecode(responseInfo.body);
+
+          currentDeal["cheapestPrice"] = gameResponse["cheapestPrice"]["price"];
+          currentDeal["rating"] = gameResponse["gameInfo"]["steamRatingPercent"];
+          currentDeal["ratingCount"] = gameResponse["gameInfo"]["steamRatingCount"];
+          currentDeal["releaseDate"] = gameResponse["gameInfo"]["releaseDate"];
+          currentDeal["metacriticScore"] = gameResponse["gameInfo"]["metacriticScore"];
+        }
+
         dealsList.add(currentDeal);
       }
     }
@@ -187,103 +205,7 @@ class _MainPageState extends State<MainPage> {
   }
 }
 
-class DealsBody extends StatelessWidget {
-  const DealsBody({
-    super.key,
-    required this.dealsList,
-  });
 
-  final List dealsList;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: double.infinity,
-      child: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              itemCount: dealsList.length,
-              itemBuilder: (context, index) {
-                return InkWell(
-                  onTap: () {
-                    showDialog(
-                      context: (context),
-                      builder: (context) {
-                        return AlertDialog(
-                          title: Text("${dealsList[index]["title"]}")
-                        );
-                      }
-                    );
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 8.0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(color: canvasColor, width: 2.5),
-                        borderRadius: BorderRadius.circular(20.0) 
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(17.0),
-                            child: SizedBox(
-                              height: 150,
-                              child: Image.network(
-                                "${dealsList[index]["image"]}",
-                                fit: BoxFit.fill,
-                              ),
-                            )
-                          ),
-                          Row(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(left: 20.0),
-                                child: Text(
-                                  "${dealsList[index]["title"]}".length > 30 ? '${dealsList[index]["title"].substring(0, 27)}...' : '${dealsList[index]["title"]}',
-                                  style: TextStyle(
-                                    fontSize: 15
-                                  ),
-                                ),
-                              ),
-                              Spacer(),
-                              Text(
-                                "\$${dealsList[index]["salePrice"]}  ",
-                                style: TextStyle(
-                                  color: Colors.green,
-                                  fontSize: 15,
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(right: 20.0),
-                                child: Text(
-                                  "${dealsList[index]["normalPrice"]}",
-                                  style: TextStyle(
-                                    color: Colors.red,
-                                    fontSize: 15,
-                                    decoration: TextDecoration.lineThrough,
-                                    decorationColor: Colors.red
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      )
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-        ],         
-      ),
-    );
-  }
-}
 
 Widget getBodyFromIndex(int index) {
   switch (index) {
@@ -302,7 +224,7 @@ Widget getBodyFromIndex(int index) {
       } 
     // search
     case 1: 
-      return Container();
+      return SearchBody();
     // favorites
     case 2:
       return Container();
