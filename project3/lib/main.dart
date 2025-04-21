@@ -7,14 +7,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sidebarx/sidebarx.dart';
 import 'search.dart';
 import 'deals.dart';
+import 'about.dart';
 
 /// @author: Joe Trovato
-/// @version: 0.4.0
-/// @since: 2025-04-15
+/// @version: 0.5.5
+/// @since: 2025-04-21
 /// 
-/// todo: info page, favorites, game search
+/// todo: info page, game search
 /// 
-/// notes: none
+/// notes: favorites and deals page mainly finished aside from aesthetics and mailing list
+/// going to about page from sidebar will not allow you to navigate back currently
 
 final GoRouter router = GoRouter(
   initialLocation: "/",
@@ -23,15 +25,21 @@ final GoRouter router = GoRouter(
       path: "/",
       builder: (context, state) => const MainPage(),
     ),
+    GoRoute(
+      path: "/about",
+      builder: (context, state) => const AboutPage(),
+    )
   ]
 );
 
-List dealsList = [];
-List favoritesList = [];
 const primaryColor = Color(0xFF685BFF);
 const canvasColor = Color(0xFF2E2E48);
 const scaffoldBackgroundColor = Color(0xFF464667);
 const accentCanvasColor = Color(0xFF3E3E61);
+
+List dealsList = [];
+List favoritesList = [];
+
 final divider = Divider(color: Colors.white.withValues(alpha: 0.3), height: 1);
 
 void main() {
@@ -63,7 +71,7 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  String dealsUrl = "https://www.cheapshark.com/api/1.0/deals?storeID=1&AAA=1&pageSize=20";
+  String dealsUrl = "https://www.cheapshark.com/api/1.0/deals?storeID=1&AAA=1&pageSize=20&metacritic=5";
   final sidebarController = SidebarXController(selectedIndex: 0, extended: true); 
 
   @override
@@ -77,14 +85,9 @@ class _MainPageState extends State<MainPage> {
 
     dealsList.clear();
     
-
     if (response.statusCode == 200) {
       var jsonResp = jsonDecode(response.body);
 
-      // title: "title"
-      // sale price: "salePrice"
-      // normal price: "normalPrice"
-      // image: "thumb"
       for (final deal in jsonResp) {
         Map currentDeal = {};
         
@@ -112,7 +115,10 @@ class _MainPageState extends State<MainPage> {
           currentDeal["cheapestPrice"] = gameResponse["cheapestPrice"]["price"];
           currentDeal["rating"] = gameResponse["gameInfo"]["steamRatingPercent"];
           currentDeal["ratingCount"] = gameResponse["gameInfo"]["steamRatingCount"];
-          currentDeal["releaseDate"] = gameResponse["gameInfo"]["releaseDate"];
+
+          DateTime date = DateTime.fromMillisecondsSinceEpoch(gameResponse["gameInfo"]["releaseDate"] * 1000);
+          currentDeal["releaseDate"] = "${date.month}/${date.day}/${date.year}";
+
           currentDeal["metacriticScore"] = gameResponse["gameInfo"]["metacriticScore"];
         }
 
@@ -162,7 +168,7 @@ class _MainPageState extends State<MainPage> {
             icon: Icons.info, 
             label: 'About',
             onTap: () {
-              setState(() {});
+              context.go("/about");
             },
           ),
         ],
@@ -205,8 +211,6 @@ class _MainPageState extends State<MainPage> {
   }
 }
 
-
-
 Widget getBodyFromIndex(int index) {
   switch (index) {
     // deals
@@ -227,7 +231,7 @@ Widget getBodyFromIndex(int index) {
       return SearchBody();
     // favorites
     case 2:
-      return Container();
+      return DealsBody(dealsList: favoritesList);
     // about
     case 3:
       return Container();

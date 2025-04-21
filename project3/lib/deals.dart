@@ -100,21 +100,23 @@ class DealsBody extends StatelessWidget {
         return AlertDialog(
           title: Row(
             children: [
-              Text("${dealsList[index]["title"]}"),
+              Text("${dealsList[index]["title"]}".length > 22 ? '${dealsList[index]["title"].substring(0, 19)}...' : '${dealsList[index]["title"]}'),
               Spacer(),
               LikeButton(
                 isLiked: dealsList[index]["isLiked"],
                 onTap: (isLiked) async {
                   // add to favorites list
-                  if (!isLiked) {
+                  if (!favoritesList.contains(dealsList[index])) {
                     favoritesList.add(dealsList[index]);
                     dealsList[index]["isLiked"] = true;
+                    isLiked = true;
+                    return isLiked;
                   } else {
-                    favoritesList.remove(dealsList[index]);
+                    isLiked = false;
                     dealsList[index]["isLiked"] = false;
+                    favoritesList.remove(dealsList[index]);                 
+                    return isLiked;
                   }
-
-                  return !isLiked;
                 },
               ),
             ],
@@ -131,6 +133,7 @@ class DealsBody extends StatelessWidget {
                 Text("Lowest Seen Price: \$${dealsList[index]["cheapestPrice"]}", style: TextStyle(fontSize: 15),),
                 Text("\n${dealsList[index]["rating"]}% of ${dealsList[index]["ratingCount"]} user reviews are positive"),
                 Text("Metacritic Score: ${dealsList[index]["metacriticScore"]}"),
+                Text("Released On: ${dealsList[index]["releaseDate"]}"),
               ],
             ),
           ),
