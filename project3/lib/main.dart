@@ -5,12 +5,13 @@ import 'package:http/http.dart' as http;
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:animated_search_bar/animated_search_bar.dart';
+import 'package:card_loading/card_loading.dart';
 import 'package:sidebarx/sidebarx.dart';
 import 'deals.dart';
 import 'about.dart';
 
 /// @author: Joe Trovato
-/// @version: 0.6.7
+/// @version: 0.6.8
 /// @since: 2025-04-21
 /// 
 /// todo: info page
@@ -298,11 +299,24 @@ Widget getBodyFromIndex(int index) {
     // deals
     case 0:
       if (dealsList.isEmpty) {
-        return Center(
-          child: Text("Loading...", style: TextStyle(
-            fontSize: 40,
-            color: Colors.white
-            ),
+        return Container(
+          width: double.infinity,
+          height: double.infinity,
+          child: Column(
+            children: [
+              Expanded(
+                child: ListView.builder(
+                  itemCount: 5,
+                  itemBuilder: (context, index) {
+                    return CardLoading(
+                      height: 170,
+                      borderRadius: BorderRadius.circular(20),
+                      margin: EdgeInsets.only(left: 8.0, right: 8.0, top: 8.0),
+                    );
+                  },
+                ),
+              )
+            ],
           ),
         );
       } else {

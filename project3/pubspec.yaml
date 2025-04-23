@@ -8,6 +8,7 @@ environment:
 
 dependencies:
   animated_search_bar: ^2.8.0
+  card_loading: ^0.3.2
   flutter:
     sdk: flutter
   go_router: ^14.8.1
