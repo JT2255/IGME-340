@@ -11,12 +11,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:animated_search_bar/animated_search_bar.dart';
 
 /// @author: Joe Trovato
-/// @version: 0.8.9
+/// @version: 0.9.0
 /// @since: 2025-04-26
 /// 
-/// todo: info page
+/// todo:
 /// 
-/// notes: going to about page from sidebar will not allow you to navigate back currently
+/// notes:
 
 final GoRouter router = GoRouter(
   initialLocation: "/",
@@ -320,7 +320,7 @@ Widget getBodyFromIndex(int index) {
       return DealsBody(dealsList: favoritesList);
     // about
     case 2:
-      return Container();
+      return DealsBody(dealsList: dealsList);
     default:
       return Container();  
   }

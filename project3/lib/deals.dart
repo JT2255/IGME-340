@@ -100,7 +100,7 @@ class DealsBody extends StatelessWidget {
         return AlertDialog(
           title: Row(
             children: [
-              Text("${dealsList[index]["title"]}".length > 20 ? '${dealsList[index]["title"].substring(0, 17)}..' : '${dealsList[index]["title"]}'),
+              Text("${dealsList[index]["title"]}".length > 17 ? '${dealsList[index]["title"].substring(0, 14)}..' : '${dealsList[index]["title"]}'),
               Spacer(),
               LikeButton(
                 isLiked: dealsList[index]["isLiked"],
