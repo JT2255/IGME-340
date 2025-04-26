@@ -1,23 +1,22 @@
-import 'package:flutter/material.dart';
-import 'dart:convert';
-import 'dart:developer';
-import 'package:http/http.dart' as http;
-import 'package:go_router/go_router.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:animated_search_bar/animated_search_bar.dart';
-import 'package:card_loading/card_loading.dart';
-import 'package:sidebarx/sidebarx.dart';
 import 'deals.dart';
 import 'about.dart';
+import 'dart:convert';
+import 'dart:developer';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:sidebarx/sidebarx.dart';
+import 'package:go_router/go_router.dart';
+import 'package:card_loading/card_loading.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:animated_search_bar/animated_search_bar.dart';
 
 /// @author: Joe Trovato
-/// @version: 0.6.8
-/// @since: 2025-04-21
+/// @version: 0.8.9
+/// @since: 2025-04-26
 /// 
 /// todo: info page
 /// 
-/// notes: favorites and deals page mainly finished aside from aesthetics and mailing list
-/// going to about page from sidebar will not allow you to navigate back currently
+/// notes: going to about page from sidebar will not allow you to navigate back currently
 
 final GoRouter router = GoRouter(
   initialLocation: "/",
@@ -40,6 +39,12 @@ const accentCanvasColor = Color(0xFF3E3E61);
 
 List dealsList = [];
 List favoritesList = [];
+late SharedPreferences myPrefs;
+
+Future saveData() async {
+  String favoritesMap = json.encode(favoritesList);
+  await myPrefs.setString("favorites", favoritesMap);
+}
 
 final divider = Divider(color: Colors.white.withValues(alpha: 0.3), height: 1);
 
@@ -57,7 +62,8 @@ class MainApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: primaryColor,
         canvasColor: canvasColor,
-        scaffoldBackgroundColor: scaffoldBackgroundColor
+        scaffoldBackgroundColor: scaffoldBackgroundColor,
+        fontFamily: 'Electrolize',
       ),
       routerConfig: router,
     );
@@ -75,7 +81,7 @@ class _MainPageState extends State<MainPage> {
   String dealsUrl = "https://www.cheapshark.com/api/1.0/deals?storeID=1&AAA=1&pageSize=20&metacritic=5";
   final sidebarController = SidebarXController(selectedIndex: 0, extended: true); 
   final TextEditingController searchController = TextEditingController();
-
+  
 
   @override
   void initState() {
@@ -84,6 +90,11 @@ class _MainPageState extends State<MainPage> {
   }
 
   Future init() async {
+    myPrefs = await SharedPreferences.getInstance();
+    String? favorites = myPrefs.getString("favorites");
+
+    if (favorites != null) { favoritesList = jsonDecode(favorites); }
+
     var response = await http.get(Uri.parse(dealsUrl));
 
     dealsList.clear();
@@ -228,6 +239,7 @@ class _MainPageState extends State<MainPage> {
           },
         ),
         backgroundColor: canvasColor,
+        
       ),
       body: getBodyFromIndex(sidebarController.selectedIndex),
       drawer: SidebarX(
@@ -299,26 +311,7 @@ Widget getBodyFromIndex(int index) {
     // deals
     case 0:
       if (dealsList.isEmpty) {
-        return Container(
-          width: double.infinity,
-          height: double.infinity,
-          child: Column(
-            children: [
-              Expanded(
-                child: ListView.builder(
-                  itemCount: 5,
-                  itemBuilder: (context, index) {
-                    return CardLoading(
-                      height: 170,
-                      borderRadius: BorderRadius.circular(20),
-                      margin: EdgeInsets.only(left: 8.0, right: 8.0, top: 8.0),
-                    );
-                  },
-                ),
-              )
-            ],
-          ),
-        );
+        return LoadingBody();
       } else {
         return DealsBody(dealsList: dealsList);
       } 
@@ -343,5 +336,35 @@ String getTitleFromIndex(int index) {
       return "About";
     default:
       return "Game Deals";
+  }
+}
+
+class LoadingBody extends StatelessWidget {
+  const LoadingBody({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      child: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemCount: 5,
+              itemBuilder: (context, index) {
+                return CardLoading(
+                  height: 170,
+                  borderRadius: BorderRadius.circular(20),
+                  margin: EdgeInsets.only(left: 8.0, right: 8.0, top: 8.0),
+                );
+              },
+            ),
+          )
+        ],
+      ),
+    );
   }
 }

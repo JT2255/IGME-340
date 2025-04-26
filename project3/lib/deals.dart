@@ -52,7 +52,7 @@ class DealsBody extends StatelessWidget {
                               Padding(
                                 padding: const EdgeInsets.only(left: 20.0),
                                 child: Text(
-                                  "${dealsList[index]["title"]}".length > 30 ? '${dealsList[index]["title"].substring(0, 27)}...' : '${dealsList[index]["title"]}',
+                                  "${dealsList[index]["title"]}".length > 30 ? '${dealsList[index]["title"].substring(0, 27)}..' : '${dealsList[index]["title"]}',
                                   style: TextStyle(
                                     fontSize: 15
                                   ),
@@ -86,8 +86,8 @@ class DealsBody extends StatelessWidget {
                   ),
                 );
               },
-            ),
-          ),
+            ),            
+          ),      
         ],         
       ),
     );
@@ -100,7 +100,7 @@ class DealsBody extends StatelessWidget {
         return AlertDialog(
           title: Row(
             children: [
-              Text("${dealsList[index]["title"]}".length > 17 ? '${dealsList[index]["title"].substring(0, 14)}...' : '${dealsList[index]["title"]}'),
+              Text("${dealsList[index]["title"]}".length > 20 ? '${dealsList[index]["title"].substring(0, 17)}..' : '${dealsList[index]["title"]}'),
               Spacer(),
               LikeButton(
                 isLiked: dealsList[index]["isLiked"],
@@ -110,11 +110,13 @@ class DealsBody extends StatelessWidget {
                     favoritesList.add(dealsList[index]);
                     dealsList[index]["isLiked"] = true;
                     isLiked = true;
+                    saveData();
                     return isLiked;
                   } else {
                     isLiked = false;
                     dealsList[index]["isLiked"] = false;
-                    favoritesList.remove(dealsList[index]);                 
+                    favoritesList.remove(dealsList[index]);     
+                    saveData();            
                     return isLiked;
                   }
                 },
@@ -158,7 +160,7 @@ class DealsBody extends StatelessWidget {
                   child: FilledButton(
                     onPressed: () {
                       // open metacritic
-                      launchUrlString("https://www.metacritic.com${dealsList[index]["metacriticLink"]}", mode: LaunchMode.externalApplication);
+                      launchUrlString("https://www.metacritic.com${dealsList[index]["metacriticLink"]}", mode: LaunchMode.inAppBrowserView);
                     },
                     style: FilledButton.styleFrom(
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6.0)),
@@ -168,7 +170,7 @@ class DealsBody extends StatelessWidget {
                 ),
                 FilledButton(
                   onPressed: () {
-                    // open steam page or app if installed on phone
+                    // open steam page, kept as external for purposes of opening steam app if it is present on phone
                     launchUrlString("https://store.steampowered.com/app/${dealsList[index]["steamID"]}", mode: LaunchMode.externalApplication);
                   },
                   style: FilledButton.styleFrom(
