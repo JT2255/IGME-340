@@ -2,6 +2,7 @@ import 'main.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+// documentation text for app
 String documentationText = """My proposal for this project was an app that could be used to find and save deals, which I believe I had achieved well. I first started with the deals page, getting a ListView builder
 to compile the results I recieved from the api. 
 \nOnce I had the deals page working I then started on showing game info. I added an alert dialog containg all of the info for the game aswell as a like button to allow the user to save the games they liked in a seperate area. After that I implemented the search functionality into the app.
@@ -9,12 +10,14 @@ to compile the results I recieved from the api.
 \nI met the requiremnts for this app by creating something I believe to be useful and easy to use. The app makes use of shared_preferences, has more than 1 page, does not crash, has adocumentation page, and has a custom icon, splash screen, and name.
 """;
 
+// sources used text
 String sourcesText = """
 App Icon Asset: flaticon.com
 Splash Branding: RIT
 Font: Electrolize
 """;
 
+/// create state for page
 class AboutPage extends StatefulWidget {
   const AboutPage({super.key});
 
@@ -22,10 +25,12 @@ class AboutPage extends StatefulWidget {
   State<AboutPage> createState() => _AboutPageState();
 }
 
+///  class for displaying documentation for app
 class _AboutPageState extends State<AboutPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // app bar with button to go back to main page
       appBar: AppBar(
         backgroundColor: canvasColor,
         leading: IconButton(
@@ -35,6 +40,7 @@ class _AboutPageState extends State<AboutPage> {
           icon: Icon(Icons.arrow_back),
         ),
       ),
+      // body containing all documentation text
       body: Container(
         width: double.infinity,
         height: double.infinity,
